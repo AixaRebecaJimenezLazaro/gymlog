@@ -1,0 +1,24 @@
+name: gymlog
+description: GymLog - registro de entrenamientos con rutinas por día, récords y progreso.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  shared_preferences: ^2.2.0
+
+dev_dependencies:
+  flutter_launcher_icons: ^0.14.0
+
+flutter:
+  uses-material-design: true
+
+flutter_launcher_icons:
+  android: false
+  ios: true
+  image_path: "assets/icon.png"
+  remove_alpha_ios: true

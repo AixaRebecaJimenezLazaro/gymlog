@@ -1,0 +1,47 @@
+GYMLOG - APP NATIVA PARA IPHONE (Flutter)
+=========================================
+
+Necesitas una Mac con:
+  - Xcode (de la App Store), abierto al menos una vez para aceptar la licencia
+  - Flutter instalado   (flutter doctor debe mostrar Xcode en verde)
+  - CocoaPods           (brew install cocoapods)
+  - Tu iPhone y un cable
+  - Un Apple ID (gratis sirve para probar en tu propio iPhone)
+
+PASO 1 - Preparar el proyecto
+  Descomprime el zip, abre la Terminal en la carpeta gymlog_ios y ejecuta:
+
+      bash configurar_ios.sh com.tunombre
+
+  Cambia "com.tunombre" por algo unico (por ejemplo com.rebeca.gymlog).
+  El script genera la carpeta ios/, instala dependencias, pone el icono y el nombre
+  "GymLog", y abre Xcode.
+
+PASO 2 - Activar el modo desarrollador en el iPhone
+  Ajustes > Privacidad y seguridad > Modo de desarrollador > Activar (reinicia).
+  Conecta el iPhone con el cable y toca "Confiar en este equipo".
+
+PASO 3 - Firmar en Xcode
+  1. Xcode > Settings > Accounts > agrega tu Apple ID.
+  2. En el panel izquierdo elige "Runner", luego el target Runner,
+     pestana "Signing & Capabilities".
+  3. Marca "Automatically manage signing" y elige tu Team (Personal Team).
+  4. Si dice que el Bundle Identifier no esta disponible, cambialo por otro unico.
+
+PASO 4 - Instalarla en tu iPhone
+  En la Terminal, dentro de la carpeta del proyecto:
+
+      flutter run --release
+
+  (Usa --release: una app instalada en modo debug no se puede abrir sola
+  desde la pantalla de inicio.)
+  La primera vez, en el iPhone ve a Ajustes > General > VPN y administracion de
+  dispositivos, toca tu Apple ID y "Confiar".
+
+NOTAS
+  - Con Apple ID gratuito la app caduca a los 7 dias y hay que reinstalarla
+    (repite flutter run --release; los datos se conservan si no la desinstalas).
+  - Para que no caduque, subirla a TestFlight o a la App Store necesitas el
+    Apple Developer Program (de pago, anual). Luego:  flutter build ipa
+  - Los datos se guardan en el telefono (shared_preferences).
+  - Si algo falla, copia el error completo de la Terminal o de Xcode.
