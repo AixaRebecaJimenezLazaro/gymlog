@@ -8,24 +8,44 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Buscar el proyecto Flutter
+        id: dir
+        run: |
+          echo "Archivos en el repositorio:"
+          find . -maxdepth 3 -not -path './.git/*' -not -path './.git' | sort | head -60
+          F=$(find . -name pubspec.yaml -not -path './.git/*' | head -n 1)
+          if [ -z "$F" ]; then echo "ERROR: no hay pubspec.yaml en el repositorio"; exit 1; fi
+          P=$(dirname "$F")
+          if [ ! -f "$P/lib/main.dart" ]; then echo "ERROR: falta lib/main.dart en $P"; exit 1; fi
+          echo "Proyecto en: $P"
+          echo "path=$P" >> "$GITHUB_OUTPUT"
+
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
 
       - name: Generar proyecto iOS
+        working-directory: ${{ steps.dir.outputs.path }}
         run: |
           cp lib/main.dart /tmp/main.bak
           flutter create --platforms=ios --org com.gymlog --project-name gymlog .
           cp /tmp/main.bak lib/main.dart
           rm -f test/widget_test.dart
+          flutter pub add shared_preferences
           flutter pub get
-          dart run flutter_launcher_icons
+          if grep -q flutter_launcher_icons pubspec.yaml && [ -f assets/icon.png ]; then
+            dart run flutter_launcher_icons
+          else
+            echo "Sin icono personalizado: se usara el de Flutter"
+          fi
           /usr/libexec/PlistBuddy -c "Set :CFBundleDisplayName GymLog" ios/Runner/Info.plist
 
       - name: Compilar
+        working-directory: ${{ steps.dir.outputs.path }}
         run: flutter build ios --release --no-codesign
 
       - name: Crear IPA
+        working-directory: ${{ steps.dir.outputs.path }}
         run: |
           mkdir Payload
           cp -R build/ios/iphoneos/Runner.app Payload/
@@ -34,4 +54,4 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: GymLog-ipa
-          path: GymLog.ipa
+          path: ${{ steps.dir.outputs.path }}/GymLog.ipa
